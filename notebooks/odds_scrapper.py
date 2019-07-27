@@ -4,9 +4,19 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 
 import pandas as pd
+import glob
+import os
 
 from name_translator import companies, seria_a
 
+'''
+Function to scrape odds-movement data from http://info.310win.com/
+league: league of match to be scraped, STRING type
+season: season of match to be scraped, STRING type
+name_translator: in combination with "name_translator.py", convert betting companies' as well as team's Chinese names to Engligh, DICTIONARY type
+url: url for the matches under selected league and for selected season, STRING type
+team_ct: number of soccer teams played in selected season in selected league, INTEGER type
+'''
 def scrapper (league, season, name_translator, url, team_ct):
 
     # Print league info
@@ -92,9 +102,9 @@ def scrapper (league, season, name_translator, url, team_ct):
 
             try:
                 # Use WebDriverWait in combination with ExpectedCondition to setup implicit wait
-                # In this case, it is 10 min for class name="rb" to respond to calls before sending Exception message
+                # In this case, set the waiting time forever(1h) for class name="rb" to respond to calls before sending Exception message
                 # Note that we are scraping data from Chinese website, which sometimes could be very slow                
-                element = WebDriverWait(driver, 600).until(
+                element = WebDriverWait(driver, 3600).until(
                     EC.presence_of_element_located((By.CLASS_NAME, "rb"))
                 )
 
@@ -139,8 +149,8 @@ def scrapper (league, season, name_translator, url, team_ct):
 
                     try:
                         # Use WebDriverWait in combination with ExpectedCondition to setup implicit wait
-                        # In this case, it is 10 min for class name="font13" to respond to calls before sending Exception message
-                        element = WebDriverWait(driver, 600).until(
+                        # In this case, set the waiting time forever(1h) for class name="font13" to respond to calls before sending Exception message
+                        element = WebDriverWait(driver, 3600).until(
                             EC.presence_of_element_located((By.CLASS_NAME, "font13"))
                         )
 
@@ -218,3 +228,13 @@ def scrapper (league, season, name_translator, url, team_ct):
     # Scrapping complete
     print("*" * 50)
     print(f"SCRAPING COMPLETE FOR {league}_S{season}")
+
+    # All csv files scrapped
+    csv_im = glob.glob(os.path.join("../data/", f"{league}_S{season}-Week*.csv"))
+    # Concatenate all csv file into one
+    df_all = pd.concat(map(pd.read_csv, csv_im))
+    # Save the concatenated csv file
+    df_all.to_csv(f"../data/{league}_S{season}.csv", index=False, header=True)
+    # Remove csv file for matches of each week
+    for csv in csv_im:
+        os.remove(csv)
