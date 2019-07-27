@@ -11,7 +11,7 @@ def scrapper (league, season, name_translator, url, team_ct):
 
     # Print league info
     print(f"START ODDS-MOVEMENT SCRAPING FOR {league}_S{season} ... ")
-    print("*" * 35)
+    print("*" * 50)
     
     # List for company names
     company_list = ["bet 365(英国)", "威廉希尔(英国)", "Bwin(奥地利)", "12BET(菲律宾)"]
@@ -40,10 +40,10 @@ def scrapper (league, season, name_translator, url, team_ct):
         print(f"Matches from week{wk} is under scrapping ...")
 
         # Element where week of match is selected
-        if wk <= 20:
+        if wk <= 19:
             ele_wk = driver.find_elements_by_xpath(f'//*[@id="Table2"]/tbody/tr[1]/td[{wk + 1}]')[0]
         else:
-            ele_wk = driver.find_elements_by_xpath(f'//*[@id="Table2"]/tbody/tr[2]/td[{wk - 20}]')[0]
+            ele_wk = driver.find_elements_by_xpath(f'//*[@id="Table2"]/tbody/tr[2]/td[{wk - 19}]')[0]
 
         # Scroll down and move to element of target and click using JavaScript
         # https://stackoverflow.com/questions/49867377/how-do-i-scroll-up-and-then-click-with-selenium-and-python
@@ -92,8 +92,9 @@ def scrapper (league, season, name_translator, url, team_ct):
 
             try:
                 # Use WebDriverWait in combination with ExpectedCondition to setup implicit wait
-                # In this case, it is 10 sec for class name="rb" to respond to calls before sending Exception message
-                element = WebDriverWait(driver, 10).until(
+                # In this case, it is 10 min for class name="rb" to respond to calls before sending Exception message
+                # Note that we are scraping data from Chinese website, which sometimes could be very slow                
+                element = WebDriverWait(driver, 600).until(
                     EC.presence_of_element_located((By.CLASS_NAME, "rb"))
                 )
 
@@ -138,8 +139,8 @@ def scrapper (league, season, name_translator, url, team_ct):
 
                     try:
                         # Use WebDriverWait in combination with ExpectedCondition to setup implicit wait
-                        # In this case, it is 10 sec for class name="font13" to respond to calls before sending Exception message
-                        element = WebDriverWait(driver, 10).until(
+                        # In this case, it is 10 min for class name="font13" to respond to calls before sending Exception message
+                        element = WebDriverWait(driver, 600).until(
                             EC.presence_of_element_located((By.CLASS_NAME, "font13"))
                         )
 
@@ -215,5 +216,5 @@ def scrapper (league, season, name_translator, url, team_ct):
     driver.close()
     
     # Scrapping complete
-    print("*" * 35)
+    print("*" * 50)
     print(f"SCRAPING COMPLETE FOR {league}_S{season}")
