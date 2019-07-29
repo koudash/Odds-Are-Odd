@@ -7,7 +7,7 @@ import pandas as pd
 import glob
 import os
 
-from name_translator import companies, seria_a
+from name_translator import companies, premier_league, seria_a, laliga, bundesliga, ligue1, mls
 
 '''
 Function to scrape odds-movement data from http://info.310win.com/
@@ -20,8 +20,9 @@ team_ct: number of soccer teams played in selected season in selected league, IN
 def scrapper (league, season, name_translator, url, team_ct):
 
     # Print league info
+    print("*" * 80)
     print(f"START ODDS-MOVEMENT SCRAPING FOR {league}_S{season} ... ")
-    print("*" * 50)
+    print("*" * 80)
     
     # List for company names
     company_list = ["bet 365(英国)", "威廉希尔(英国)", "Bwin(奥地利)", "12BET(菲律宾)"]
@@ -40,6 +41,7 @@ def scrapper (league, season, name_translator, url, team_ct):
     driver.get(url)
 
     # Loop through all weeks of matches
+    # Note that MLS week25 has not begun, it is range(1, 25) when scraping MLS data
     for wk in range(1, 2 * (team_ct - 1) + 1):
 
         # Create (Reset) DataFrame to store scrapped info for matches of each week
@@ -50,10 +52,17 @@ def scrapper (league, season, name_translator, url, team_ct):
         print(f"Matches from week{wk} is under scrapping ...")
 
         # Element where week of match is selected
-        if wk <= 19:
-            ele_wk = driver.find_elements_by_xpath(f'//*[@id="Table2"]/tbody/tr[1]/td[{wk + 1}]')[0]
-        else:
-            ele_wk = driver.find_elements_by_xpath(f'//*[@id="Table2"]/tbody/tr[2]/td[{wk - 19}]')[0]
+        # Note that web layout for MLS is different from the other league
+        if league == "MLS":
+            if wk <= 17:
+                ele_wk = driver.find_elements_by_xpath(f'//*[@id="Table2"]/tbody/tr[1]/td[{wk + 1}]')[0]
+            else:
+                ele_wk = driver.find_elements_by_xpath(f'//*[@id="Table2"]/tbody/tr[2]/td[{wk - 17}]')[0]
+        else:            
+            if wk <= team_ct - 1:
+                ele_wk = driver.find_elements_by_xpath(f'//*[@id="Table2"]/tbody/tr[1]/td[{wk + 1}]')[0]
+            else:
+                ele_wk = driver.find_elements_by_xpath(f'//*[@id="Table2"]/tbody/tr[2]/td[{wk - team_ct + 1}]')[0]
 
         # Scroll down and move to element of target and click using JavaScript
         # https://stackoverflow.com/questions/49867377/how-do-i-scroll-up-and-then-click-with-selenium-and-python
@@ -63,15 +72,20 @@ def scrapper (league, season, name_translator, url, team_ct):
         # Window handle (wh) for week of match page
         wh_dict["week"] = driver.window_handles[0]
 
+        # For on-going league like MLS, match might be postponed and therefore will not for sure be displayed in table of the week
+        # All rows in match table
+        # Note that the first two rows are actually headers
+        rows_match_table = driver.find_elements_by_xpath('//*[@id="Table3"]/tbody/*')
+        # counter for match played in week
+        match_counter = 0
+        for i in range(2, len(rows_match_table)):
+            if rows_match_table[i].find_elements_by_tag_name("td")[3].text !="":        # match score equals to "" if has not been played
+                match_counter += 1
+
         # Loop through all matches of selected week
-        # Note that "team_ct / 2" will be automatically recognized as "float"
-        for m in range(3, 3 + int(team_ct / 2)):
+        for m in range(3, 3 + match_counter):
 
             # ********** |Retrieve info. from match list of selected week| ********** #
-            # Splited match time by "\n" and temporarily stored in "match_time_split"
-            match_time_split = driver.find_elements_by_xpath(f'//*[@id="Table3"]/tbody/tr[{m}]/td[2]')[0].text.split("\n")
-            # Concatenate for "match_time" in "%m-%d %H:%M" format
-            match_time = match_time_split[0] + " " + match_time_split[1]
             # Name of home and away team
             home = driver.find_elements_by_xpath(f'//*[@id="Table3"]/tbody/tr[{m}]/td[3]/a')[0].text
             away = driver.find_elements_by_xpath(f'//*[@id="Table3"]/tbody/tr[{m}]/td[5]/a')[0].text            
@@ -109,15 +123,18 @@ def scrapper (league, season, name_translator, url, team_ct):
                 )
 
                 # ********** |Retrieve info. from specific match (as represented by iterator j) of selected week| ********** #                
-                # All text under "td" element
+                # All text under "td" element with match date info
                 all_text = driver.find_elements_by_xpath('//*[@id="team"]/form/table/tbody/tr[1]/td')[0].text
-                # text of the second "span" from bottom will be used as separator to split "all_text"
-                # Note that text of the last "span" is ""
-                sep = driver.find_elements_by_xpath('//*[@id="team"]/form/table/tbody/tr[1]/td/*')[-2].text                
+                # Split "all_text" and get string with date info
+                date_info = all_text.split("]")[-1]
                 # Year info. of selected match
-                year = all_text.split(sep)[-1][:4]            
-                # With "year" being retrieved, convert "match_time" to timestamps format
-                match_time = pd.to_datetime(str(year) + "-" + match_time, format="%Y-%m-%d %H:%M", errors="ignore")        
+                year = date_info[:4]
+                month = date_info[5:7]
+                day = date_info[8:10]
+                time_info = date_info[-5:]
+                # Concatenate "match_time" and convert to timestamps format
+                # Note that match time is scrapped as Central Standard Time (CST), no need to adjust for Central Daylight Time (CDT)
+                match_time = pd.to_datetime(f"{year}-{month}-{day} {time_info}", format="%Y-%m-%d %H:%M", errors="ignore")        
                 
                 # Retrieve all "tr" that have odds data provided by different companies
                 rows_companies = driver.find_elements_by_xpath(f'//*[@id="oddsList_tab"]/tbody/*')
@@ -155,12 +172,6 @@ def scrapper (league, season, name_translator, url, team_ct):
                         )
 
                         # ********** |Scrape odds data from selected company| ********** #
-                        # Hour difference between Central (Daylight/Standard) Time (GMT-5/-6 for CDT/CST) and China Standard Time (GMT+8)
-                        if (match_time < pd.Timestamp('2018-11-04')) or (match_time >= pd.Timestamp('2019-03-10')):
-                            delta_hour = 13
-                        else:
-                            delta_hour = 14
-
                         # Retrieve all rows from tbody
                         rows_odds = driver.find_elements_by_xpath('/html/body/table/tbody/*')
 
@@ -190,11 +201,16 @@ def scrapper (league, season, name_translator, url, team_ct):
                             # Remove unnecessary Chinese character from original odds                    
                             if o == len(rows_odds) - 1:
                                 dict_im[-1] = dict_im[-1][:-4]
+                                                      
                             # Convert the type of odds time from string to Timestamp
-                            odds_time = pd.to_datetime(str(year) + "-" + dict_im[-1], format="%Y-%m-%d %H:%M", errors="ignore")
+                            odds_time = pd.to_datetime(year + "-" + dict_im[-1], format="%Y-%m-%d %H:%M", errors="ignore")
                             # Calculate minutes difference of odds update time towards the start of match
-                            # Note that "match_time" is scrapped as CDT/CST and "odds_time" is scarpped as China Standard Time
-                            delta_minutes = (match_time - odds_time + pd.Timedelta(hours=delta_hour)).total_seconds() / 60
+                            # Note that "match_time" is GMT-6 and "odds_time" is GMT+8, +8 - (-6) = 14h
+                            delta_minutes = (match_time - odds_time + pd.Timedelta(hours=14)).total_seconds() / 60
+                            # There is possibility that odds were released by the end of 2018 and match played in 2019
+                            # In this scenario, "delta_minutes" will be calculated less than -500000
+                            if delta_minutes < -100000:  # Randomly pick -100000
+                                delta_minutes += 365 * 24 * 60
 
                             # Append minutes for odds towards starting of the match to "odds_time_list"
                             match.loc[index, "win_odds"] = dict_im[0]
@@ -226,8 +242,9 @@ def scrapper (league, season, name_translator, url, team_ct):
     driver.close()
     
     # Scrapping complete
-    print("*" * 50)
+    print("*" * 80)
     print(f"SCRAPING COMPLETE FOR {league}_S{season}")
+    print("*" * 80 + "\n")
 
     # All csv files scrapped
     csv_im = glob.glob(os.path.join("../data/", f"{league}_S{season}-Week*.csv"))
