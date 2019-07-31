@@ -28,7 +28,7 @@ premier_league = {
     "哈德斯菲尔德": "HUD"
 }
 
-seria_a = {
+serie_a = {
     "尤文图斯": "JUV",
     "那不勒斯": "NAP",
     "亚特兰大": "ATA",

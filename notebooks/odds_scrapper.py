@@ -7,7 +7,7 @@ import pandas as pd
 import glob
 import os
 
-from name_translator import companies, premier_league, seria_a, laliga, bundesliga, ligue1, mls
+from name_translator import companies, premier_league, serie_a, laliga, bundesliga, ligue1, mls
 
 '''
 Function to scrape odds-movement data from http://info.310win.com/
