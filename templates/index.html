@@ -22,8 +22,6 @@
         </script>
         <!-- "Sketchy" theme from Bootswatch -->
         <link rel="stylesheet" type="text/css" href="https://bootswatch.com/4/sketchy/bootstrap.min.css">
-        <!-- Plotly CDN -->
-        <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
         <!-- Local style CSS -->
         <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/style.css') }}">
         <!-- Avoid fake favicon requests -->
@@ -109,7 +107,7 @@
                     </li>
                 </ul></p>
                 <p class="lead">
-                <a class="btn btn-primary btn-lg" href="./prediction.html" role="button" target="_blank">Predict</a>
+                <a class="btn btn-primary btn-lg" href="/prediction" role="button" target="_blank">Predict</a>
                 </p>
             </div>
         </div>  

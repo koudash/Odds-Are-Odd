@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta http-equiv="X-UA-Compatible" content="ie=edge">
+        <title>Matches</title>
+        <!-- Bootstrap CSS -->
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" 
+            integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+        <!-- Bootstrap jQuery and Popper.js -->
+        <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" 
+            integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" 
+            crossorigin="anonymous">
+        </script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" 
+            integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" 
+            crossorigin="anonymous">
+        </script>
+        <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" 
+        integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+        <!-- "Sketchy" theme from Bootswatch -->
+        <link rel="stylesheet" type="text/css" href="https://bootswatch.com/4/sketchy/bootstrap.min.css">
+        <!-- Leaflet CSS & JS -->
+        <link rel="stylesheet" href="https://unpkg.com/leaflet@1.5.1/dist/leaflet.css"
+            integrity="sha512-xwE/Az9zrjBIphAcBb3F6JVqxf46+CDLwfLMHloNu6KEQCAWi6HcDUbeOfBIptF7tcCzusKFjFw2yuvEpDL9wQ=="
+            crossorigin=""/>
+        <script src="https://unpkg.com/leaflet@1.5.1/dist/leaflet.js"
+            integrity="sha512-GffPMF3RvMeYyc1LWMHtK8EbPv0iNZ8/oTtHPx9/cc2ILxQ+u905qIwdpULaqDkyBKgOaB57QTMg7ztg8Jm2Og=="
+            crossorigin=""></script>
+        <!-- Plotly CDN -->
+        <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+        <!-- Local style CSS -->
+        <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/style_pred.css') }}">
+        <!-- Avoid fake favicon requests -->
+        <link rel="icon" href="data:;base64,iVBORw0KGgo=">
+    </head>
+    <body>
+        <div class="container-fluid mb-5 pb-5">
+            <div class="row">
+                <div class="col-12">
+                    <h1 class="text-center text-warning mt-5 my-3">Choose a league to begin with ...</h1>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-2">
+                    <a href="{{ url_for('matches_request', type='PremierLeague' )}}">
+                        <img class="league" src="../static/image/icons/Leagues/PremierLeague.png" alt="PremierLeague">
+                    </a>
+                </div>
+                <div class="col-2">
+                    <a href="{{ url_for('matches_request', type='LaLiga' )}}">
+                        <img class="league" src="../static/image/icons/Leagues/LaLiga.png" alt="LaLiga">
+                    </a>
+                </div>
+                <div class="col-2">
+                    <a href="{{ url_for('matches_request', type='Bundesliga' )}}">
+                        <img class="league" src="../static/image/icons/Leagues/Bundesliga.png" alt="Bundesliga">
+                    </a>
+                </div>
+                <div class="col-2">
+                    <a href="{{ url_for('matches_request', type='Serie-A' )}}">
+                        <img class="league" src="../static/image/icons/Leagues/Serie-A.png" alt="Serie-A">
+                    </a>
+                </div>
+                <div class="col-2">
+                    <a href="{{ url_for('matches_request', type='Ligue1' )}}">
+                        <img class="league" src="../static/image/icons/Leagues/Ligue1.png" alt="Ligue1">
+                    </a>
+                </div>
+                <div class="col-2">
+                    <a href="{{ url_for('matches_request', type='MLS' )}}">
+                        <img class="league" src="../static/image/icons/Leagues/MLS.png" alt="MLS">
+                    </a>
+                </div>
+            </div>
+        </div>
+        
+        <div class="container-fluid mt-5 pt-5">
+            <div class="row">
+                <div class="col-12 text-center" id="pred">
+
+
+
+
+
+
+                </div>
+            </div>
+        
+
+
+
+
+
+
+        </div>
+        
+         
+        
+        
+        
+        
+        
+        
+
+
+
+
+        <div class="text-white" id="footer"><hr id="hr-footer">Andrea, Elsa, Lei, Ovais</div>
+    </div>
+    <script src="https://d3js.org/d3.v5.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/d3-tip/0.9.1/d3-tip.js"></script>
+    <!-- Plotting.js -->
+    <!-- Event listener for "current" matching schedules of selected league.js -->
+    <script src="{{ url_for('static', filename='js/matching_teams.js') }}"></script>  
+    </body>
+</html>
