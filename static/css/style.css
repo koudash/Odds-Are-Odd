@@ -1,0 +1,47 @@
+html,
+body {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    height: 100%;
+    min-height: 100%;
+}
+
+.san-siro {
+    /* Downloaded from https://www.pinterest.com/pin/531776668477571389/; processed in Photoshop */
+    background-image: url("../image/san-siro.png");
+    background-size: 100% 100%;
+    border-color: black;
+}
+
+.scraping {
+    /* Downloaded from https://www.icij.org/blog/2018/09/web-scraping-how-to-harvest-data-for-untold-stories/; processed in Photoshop */
+    background-image: url("../image/webscraping.png");
+    background-size: cover;
+    border-color: black;
+}
+
+.model-buildup {
+    /* Downloaded from http://www.toca-ch.com/collection/construction-cartoon-images/#photo_2; processed in Photoshop */
+    background-image: url("../image/model-buildup.png");
+    background-size: 100% 100%;
+    border-color: black;
+}
+
+.predicting {
+    background-image: url("../image/predicting.png");
+    background-size: 100% 100%;
+    border-color: black;
+}
+
+.jumbotron-hr {
+    width: 60%;
+}
+
+.details {
+    color: navy;
+}
+
+.optimized {
+    color: white;
+}

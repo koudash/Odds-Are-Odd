@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta http-equiv="X-UA-Compatible" content="ie=edge">
+        <title>OddOdds</title>
+        <!-- Bootstrap CSS -->
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" 
+            integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+        <!-- Bootstrap jQuery and Popper.js -->
+        <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" 
+            integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" 
+            crossorigin="anonymous">
+        </script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" 
+            integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" 
+            crossorigin="anonymous">
+        </script>
+        <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" 
+            integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous">
+        </script>
+        <!-- "Sketchy" theme from Bootswatch -->
+        <link rel="stylesheet" type="text/css" href="https://bootswatch.com/4/sketchy/bootstrap.min.css">
+        <!-- Plotly CDN -->
+        <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+        <!-- Local style CSS -->
+        <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/style.css') }}">
+        <!-- Avoid fake favicon requests -->
+        <link rel="icon" href="data:;base64,iVBORw0KGgo=">
+    </head>
+    <body>
+        <div class="jumbotron jumbotron-fluid san-siro">
+            <div class="container-fluid  text-right mr-4">
+                <h1 class="display-4 text-success">Odds are odd</h1>
+                <p class="lead">CAN WE MAKE PROFIT BETTING FOR ODDS?</p>
+                <hr class="jumbotron-hr my-4" style="text-align: right; margin-right: 0">
+                <p>Rice University Data Analytics Boot Camp Final Project<br>
+                    Presented by: Lei KANG<br>
+                    08-01-2019</p>
+            </div>
+        </div>
+        <div class="jumbotron jumbotron-fluid scraping">
+            <div class="container-fluid mx-4">
+                <h1 class="display-4">Data Acquisition</h1>
+                <p class="lead">Historical odds movements data were scraped using <code>Selenium</code></p>
+                <hr class="jumbotron-hr my-4" style="text-align: left; margin-left: 0">
+                <p><ul>
+                    <li>Website: &emsp;&emsp;&emsp;&emsp;&ensp;
+                        <span class='details'>http://info.310win.com/cn/League/2018-2019/36.html</span>
+                    </li>
+                    <li>Betting company: &emsp;
+                        <span class='details'><em>Bet 365</em> | <em>William Hill</em> | <em>Bwin</em> | <em>12Bet</em></span>
+                    </li>
+                    <li>Leagues: &emsp;&emsp;&emsp;&emsp;
+                        <span class='details'><em>Premier League</em> | <em>La Liga</em> | <em>Bundesliga</em> | <em>Serie-A</em> | 
+                            <em>Ligue1</em> | <em>MLS</em></span>
+                    </li>
+                    <li>Season: &emsp;&emsp;&emsp;&emsp;&ensp;
+                        <span class='details'>2018/2019</span>
+                    </li>
+                </ul></p>
+                <p class="lead">
+                <a class="btn btn-primary btn-lg" href="http://info.310win.com/cn/League/2018-2019/36.html" role="button" 
+                    target="_blank">Demo</a>
+                </p>
+            </div>
+        </div>
+        <div class="jumbotron jumbotron-fluid model-buildup">
+            <div class="container-fluid mx-4">
+                <h1 class="display-4">Data Cleaning & Model Buildup</h1>
+                <p class="lead">Scraped data were visualized and analyzed in <code>Tableau Public</code><br>
+                    Machine learning estimators were generated using <code>scikit-learn</code> and <code>TensorFlow</code> models</p>
+                <hr class="jumbotron-hr my-4" style="text-align: left; margin-left: 0">
+                <p><ul>
+                    <li>Features: &emsp;
+                        <span class='details'><em>"win_odds"</em> | <em>"draw_odds"</em> | <em>"lose_odds"</em> | 
+                           <em>"odds_delta_time"</em></span>                    
+                    </li>
+                    <li>Target: &emsp;&emsp;
+                        <span class='details'><em>"result"</em></span>
+                    </li>
+                    <li>Models: &emsp;&emsp;
+                        <span class='details'><em>Random Forest</em> | <em>Support Vector Machine</em> | <em>K-Nearest Neighbors</em> | 
+                            <em>Neural Network</em></span>
+                    </li>
+                </ul></p>
+                <p class="lead">
+                <a class="btn btn-primary btn-lg" 
+                    href="https://public.tableau.com/profile/lei8768#!/vizhome/odds_data_process/DBMSModels-Final" 
+                    role="button" target="_blank">Tableau Dashboards</a>
+                </p>
+            </div>
+        </div>
+        <div class="jumbotron jumbotron-fluid predicting">
+            <div class="mouse-effect container-fluid mx-4">
+                <h1 class="display-4">Prediction</h1>
+                <p class="lead">All optimized ML models are KNN models<br>
+                    With at least one model for each league, predict match score using odds movements data from 
+                    <span class="optimized"><em>12Bet</em></span><br>
+                </p>
+                <hr class="jumbotron-hr my-4" style="text-align: left; margin-left: 0">
+                <p><ul>
+                    <li>Odds source: &emsp;&emsp;&emsp;&emsp;&emsp;
+                        <span class='details'><em>12Bet</em></span>
+                    </li>
+                    <li>Alternative odds source: &emsp;
+                        <span class='details'><em>William Hill</em></span> (only for predicting matches in <em>Premier League</em>)
+                    </li>
+                </ul></p>
+                <p class="lead">
+                <a class="btn btn-primary btn-lg" href="./prediction.html" role="button" target="_blank">Predict</a>
+                </p>
+            </div>
+        </div>  
+    </body>
+</html>
