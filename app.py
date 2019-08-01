@@ -8,7 +8,6 @@ from sklearn.preprocessing import LabelEncoder
 from tensorflow.keras.utils import to_categorical
 
 from flask import Flask, jsonify, render_template, url_for, request
-from flask_sqlalchemy import SQLAlchemy
 
 from notebooks.model_predict import predictor
 
