@@ -1,6 +1,6 @@
 
 // Select clicked image
-d3.selectAll(".league").on('click', function() {
+d3.selectAll(".league").on('mouseover', function() {
 
     // Connect to "/prediction" route of "app.py" to retrieve predicted data
     d3.json(`/league?type=${this.alt}`).then((data) => {
