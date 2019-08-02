@@ -16,12 +16,8 @@ def predictor(league, company, instant_features):
     target_encoder = pickle.load(open(y_scalerfile, 'rb'))
 
     # Path to model
-    if company == "12Bet":
-        # All leagues have one ML model built on odds from 12Bet
-        model_path = f"models/{league}_12Bet_ML_model.pkl"    
-    else:
-        # Only "PremierLeague" has an alternative model built on odds from "WilliamHill"
-        model_path = f"models/PremierLeague_WilliamHill_ML_model.pkl"
+    # All leagues have one ML model built on odds from 12Bet
+    model_path = f"models/{league}_{company}_ML_model.pkl"    
 
     # Load ML model from disk
     model = pickle.load(open(model_path, 'rb'))

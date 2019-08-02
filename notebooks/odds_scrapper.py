@@ -13,7 +13,8 @@ from name_translator import companies, premier_league, serie_a, laliga, bundesli
 Function to scrape odds-movement data from http://info.310win.com/
 league: league of match to be scraped, STRING type
 season: season of match to be scraped, STRING type
-name_translator: in combination with "name_translator.py", convert betting companies' as well as team's Chinese names to Engligh, DICTIONARY type
+name_translator: in combination with "name_translator.py", convert betting companies' 
+                    as well as team's Chinese names to Engligh, DICTIONARY type
 url: url for the matches under selected league and for selected season, STRING type
 team_ct: number of soccer teams played in selected season in selected league, INTEGER type
 '''
@@ -76,163 +77,160 @@ def scrapper (league, season, name_translator, url, team_ct):
         # All rows in match table
         # Note that the first two rows are actually headers
         rows_match_table = driver.find_elements_by_xpath('//*[@id="Table3"]/tbody/*')
-        # counter for match played in week
-        match_counter = 0
-        for i in range(2, len(rows_match_table)):
-            if rows_match_table[i].find_elements_by_tag_name("td")[3].text !="":        # match score equals to "" if has not been played
-                match_counter += 1
 
         # Loop through all matches of selected week
-        for m in range(3, 3 + match_counter):
+        for m in range(3, 1 + len(rows_match_table)):
+            # match score equals to "" if has not been played
+            # Note that "find_elements_by_tag_name()" start counting from 0, so use "[3]" for "td[4] in "xpath"
+            if rows_match_table[m - 1].find_elements_by_tag_name("td")[3].text !="":  
 
-            # ********** |Retrieve info. from match list of selected week| ********** #
-            # Name of home and away team
-            home = driver.find_elements_by_xpath(f'//*[@id="Table3"]/tbody/tr[{m}]/td[3]/a')[0].text
-            away = driver.find_elements_by_xpath(f'//*[@id="Table3"]/tbody/tr[{m}]/td[5]/a')[0].text            
-            # Match score
-            score = driver.find_elements_by_xpath(f'//*[@id="Table3"]/tbody/tr[{m}]/td[4]/div/a')[0].text
-            # Convert match score to "W-D-L" category
-            home_score = int(score.split("-")[0])
-            away_score = int(score.split("-")[1])
-            if home_score > away_score:
-                result = "W"
-            elif home_score < away_score:
-                result = "L"
-            else:
-                result = "D"  
+                # ********** |Retrieve info. from match list of selected week| ********** #
+                # Name of home and away team
+                home = driver.find_elements_by_xpath(f'//*[@id="Table3"]/tbody/tr[{m}]/td[3]/a')[0].text
+                away = driver.find_elements_by_xpath(f'//*[@id="Table3"]/tbody/tr[{m}]/td[5]/a')[0].text            
+                # Match score
+                score = driver.find_elements_by_xpath(f'//*[@id="Table3"]/tbody/tr[{m}]/td[4]/div/a')[0].text
+                # Convert match score to "W-D-L" category
+                home_score = int(score.split("-")[0])
+                away_score = int(score.split("-")[1])
+                if home_score > away_score:
+                    result = "W"
+                elif home_score < away_score:
+                    result = "L"
+                else:
+                    result = "D"  
 
-            # Element where a specific match from iterated week is selected
-            ele_match = driver.find_elements_by_xpath(f'//*[@id="Table3"]/tbody/tr[{m}]/td[10]/a[2]')[0]
+                # Element where a specific match from iterated week is selected
+                ele_match = driver.find_elements_by_xpath(f'//*[@id="Table3"]/tbody/tr[{m}]/td[10]/a[2]')[0]
 
-            # Scroll down and move to element of target and click using JavaScript
-            driver.execute_script("arguments[0].scrollIntoView(true);", ele_match)
-            driver.execute_script("arguments[0].click()", ele_match)
+                # Scroll down and move to element of target and click using JavaScript
+                driver.execute_script("arguments[0].scrollIntoView(true);", ele_match)
+                driver.execute_script("arguments[0].click()", ele_match)
 
-            # Window handle for specific match page
-            wh_dict["match"] = driver.window_handles[1]
+                # Window handle for specific match page
+                wh_dict["match"] = driver.window_handles[1]
 
-            # Switch driver to specific match page
-            driver.switch_to.window(wh_dict["match"])
+                # Switch driver to specific match page
+                driver.switch_to.window(wh_dict["match"])
 
-            try:
-                # Use WebDriverWait in combination with ExpectedCondition to setup implicit wait
-                # In this case, set the waiting time forever(1h) for class name="rb" to respond to calls before sending Exception message
-                # Note that we are scraping data from Chinese website, which sometimes could be very slow                
-                element = WebDriverWait(driver, 3600).until(
-                    EC.presence_of_element_located((By.CLASS_NAME, "rb"))
-                )
+                try:
+                    # Use WebDriverWait in combination with ExpectedCondition to setup implicit wait
+                    # Note that we are scraping data from Chinese website, which sometimes could be very slow                
+                    # Set the waiting time forever(1h) for class name="rb" to respond to calls before sending Exception message
+                    element = WebDriverWait(driver, 3600).until(
+                        EC.presence_of_element_located((By.CLASS_NAME, "rb"))
+                    )
 
-                # ********** |Retrieve info. from specific match (as represented by iterator j) of selected week| ********** #                
-                # All text under "td" element with match date info
-                all_text = driver.find_elements_by_xpath('//*[@id="team"]/form/table/tbody/tr[1]/td')[0].text
-                # Split "all_text" and get string with date info
-                date_info = all_text.split("]")[-1]
-                # Year info. of selected match
-                year = date_info[:4]
-                month = date_info[5:7]
-                day = date_info[8:10]
-                time_info = date_info[-5:]
-                # Concatenate "match_time" and convert to timestamps format
-                # Note that match time is scrapped as Central Standard Time (CST), no need to adjust for Central Daylight Time (CDT)
-                match_time = pd.to_datetime(f"{year}-{month}-{day} {time_info}", format="%Y-%m-%d %H:%M", errors="ignore")        
-                
-                # Retrieve all "tr" that have odds data provided by different companies
-                rows_companies = driver.find_elements_by_xpath(f'//*[@id="oddsList_tab"]/tbody/*')
-                
-                # Iterate through company list
-                for company in company_list:                    
+                    # ********** |Retrieve info. from specific match (as represented by iterator j) of selected week| ********** #                
+                    # All text under "td" element with match date info
+                    all_text = driver.find_elements_by_xpath('//*[@id="team"]/form/table/tbody/tr[1]/td')[0].text
+                    # Split "all_text" and get string with date info
+                    date_info = all_text.split("]")[-1]
+                    # Year info. of selected match
+                    year = date_info[:4]
+                    month = date_info[5:7]
+                    day = date_info[8:10]
+                    time_info = date_info[-5:]
+                    # Concatenate "match_time" and convert to timestamps format
+                    # Note that match time is scrapped as Central Standard Time (CST), no need to adjust for Central Daylight Time (CDT)
+                    match_time = pd.to_datetime(f"{year}-{month}-{day} {time_info}", format="%Y-%m-%d %H:%M", errors="ignore")        
                     
-                    # Look for row of iterated company
-                    for row in rows_companies:
-
-                        # Retrieve all "td" under iterated "tr"
-                        row_data = row.find_elements_by_tag_name("td")
-
-                        if row_data[1].text == company:
-                            # Element linking to pop-up window where odds-in-movement info. is displayed
-                            ele_company = row_data[2]
-                            # Jump out of "for loop" once row of iterated company has been found
-                            break                                
-
-                    # Scroll down and move to element of target and click using JavaScript
-                    driver.execute_script("arguments[0].scrollIntoView(true);", ele_company)
-                    driver.execute_script("arguments[0].click()", ele_company)
-
-                    # Window handle for odds info from iterated company for the specific match
-                    wh_dict["company"] = driver.window_handles[2]
+                    # Retrieve all "tr" that have odds data provided by different companies
+                    rows_companies = driver.find_elements_by_xpath(f'//*[@id="oddsList_tab"]/tbody/*')
                     
-                    # Switch driver to odds info from iterated company for the specific match
-                    driver.switch_to.window(wh_dict["company"])
+                    # Iterate through company list
+                    for company in company_list:                    
+                        
+                        # Look for row of iterated company
+                        for row in rows_companies:
 
-                    try:
-                        # Use WebDriverWait in combination with ExpectedCondition to setup implicit wait
-                        # In this case, set the waiting time forever(1h) for class name="font13" to respond to calls before sending Exception message
-                        element = WebDriverWait(driver, 3600).until(
-                            EC.presence_of_element_located((By.CLASS_NAME, "font13"))
-                        )
+                            # Retrieve all "td" under iterated "tr"
+                            row_data = row.find_elements_by_tag_name("td")
 
-                        # ********** |Scrape odds data from selected company| ********** #
-                        # Retrieve all rows from tbody
-                        rows_odds = driver.find_elements_by_xpath('/html/body/table/tbody/*')
+                            if row_data[1].text == company:
+                                # Element linking to pop-up window where odds-in-movement info. is displayed
+                                ele_company = row_data[2]
+                                # Jump out of "for loop" once row of iterated company has been found
+                                break                                
 
-                        # Loop through each row (except the header)
-                        # Note that there is no "th" in this table and header is actually the first "tr"
-                        for o in range(1, len(rows_odds)):
-                            # Find all "td"
-                            tds = rows_odds[o].find_elements_by_xpath(f'/html/body/table/tbody/tr[{o + 1}]/*')
+                        # Scroll down and move to element of target and click using JavaScript
+                        driver.execute_script("arguments[0].scrollIntoView(true);", ele_company)
+                        driver.execute_script("arguments[0].click()", ele_company)
 
-                            # Variable to hold the row in "match" where new data are to be appended
-                            index = len(match)
+                        # Window handle for odds info from iterated company for the specific match
+                        wh_dict["company"] = driver.window_handles[2]
+                        
+                        # Switch driver to odds info from iterated company for the specific match
+                        driver.switch_to.window(wh_dict["company"])
 
-                            # Append match info. to "match"
-                            match.loc[index, "week"] = wk
-                            match.loc[index, "home"] = name_translator[home]
-                            match.loc[index, "away"] = name_translator[away]
-                            match.loc[index, "company"] = companies[company]
-                            match.loc[index, "result"] = result
+                        try:
+                            # Use WebDriverWait in combination with ExpectedCondition to setup implicit wait
+                            element = WebDriverWait(driver, 3600).until(
+                                EC.presence_of_element_located((By.CLASS_NAME, "font13"))
+                            )
 
-                            # Dict to store win, draw, loss odds as well as update time for home team 
-                            dict_im = {0:"", 1:"", 2:"", -1:""}
-                            # Scrape odds as well as time features and save under corresponding keys to "dict_im"
-                            for key in list(dict_im.keys()):
-                                dict_im[key] = tds[key].text
-                            # Remove "\xa" from odds update time in "dict_im[-1]" list
-                            dict_im[-1] = dict_im[-1][2:]
-                            # Remove unnecessary Chinese character from original odds                    
-                            if o == len(rows_odds) - 1:
-                                dict_im[-1] = dict_im[-1][:-4]
-                                                      
-                            # Convert the type of odds time from string to Timestamp
-                            odds_time = pd.to_datetime(year + "-" + dict_im[-1], format="%Y-%m-%d %H:%M", errors="ignore")
-                            # Calculate minutes difference of odds update time towards the start of match
-                            # Note that "match_time" is GMT-6 and "odds_time" is GMT+8, +8 - (-6) = 14h
-                            delta_minutes = (match_time - odds_time + pd.Timedelta(hours=14)).total_seconds() / 60
-                            # There is possibility that odds were released by the end of 2018 and match played in 2019
-                            # In this scenario, "delta_minutes" will be calculated less than -500000
-                            if delta_minutes < -100000:  # Randomly pick -100000
-                                delta_minutes += 365 * 24 * 60
+                            # ********** |Scrape odds data from selected company| ********** #
+                            # Retrieve all rows from tbody
+                            rows_odds = driver.find_elements_by_xpath('/html/body/table/tbody/*')
 
-                            # Append minutes for odds towards starting of the match to "odds_time_list"
-                            match.loc[index, "win_odds"] = dict_im[0]
-                            match.loc[index, "draw_odds"] = dict_im[1]
-                            match.loc[index, "lose_odds"] = dict_im[2]                    
-                            match.loc[index, "odds_delta_time"] = delta_minutes
+                            # Loop through each row (except the header)
+                            # Note that there is no "th" in this table and header is actually the first "tr"
+                            for o in range(1, len(rows_odds)):
+                                # Find all "td"
+                                tds = rows_odds[o].find_elements_by_xpath(f'/html/body/table/tbody/tr[{o + 1}]/*')
 
-                    except:
-                        raise Exception(f'Timed out. Cannot open odds-movement webpage from {companies[company]} ...')
+                                # Variable to hold the row in "match" where new data are to be appended
+                                index = len(match)
 
-                    # Close "company" window
-                    driver.close()
-                    # Switch driver to specific match page
-                    driver.switch_to.window(wh_dict["match"])                
+                                # Append match info. to "match"
+                                match.loc[index, "week"] = wk
+                                match.loc[index, "home"] = name_translator[home]
+                                match.loc[index, "away"] = name_translator[away]
+                                match.loc[index, "company"] = companies[company]
+                                match.loc[index, "result"] = result
 
-                # Close "match" window
-                driver.close()            
-                # Switch driver to matches of iterated week page
-                driver.switch_to.window(wh_dict["week"])
+                                # Dict to store win, draw, loss odds as well as update time for home team 
+                                dict_im = {0:"", 1:"", 2:"", -1:""}
+                                # Scrape odds as well as time features and save under corresponding keys to "dict_im"
+                                for key in list(dict_im.keys()):
+                                    dict_im[key] = tds[key].text
+                                # Remove "\xa" from odds update time in "dict_im[-1]" list
+                                dict_im[-1] = dict_im[-1][2:]
+                                # Remove unnecessary Chinese character from original odds                    
+                                if o == len(rows_odds) - 1:
+                                    dict_im[-1] = dict_im[-1][:-4]
+                                                        
+                                # Convert the type of odds time from string to Timestamp
+                                odds_time = pd.to_datetime(year + "-" + dict_im[-1], format="%Y-%m-%d %H:%M", errors="ignore")
+                                # Calculate minutes difference of odds update time towards the start of match
+                                # Note that "match_time" is GMT-6 and "odds_time" is GMT+8, +8 - (-6) = 14h
+                                delta_minutes = (match_time - odds_time + pd.Timedelta(hours=14)).total_seconds() / 60
+                                # There is possibility that odds were released by the end of 2018 and match played in 2019
+                                # In this scenario, "delta_minutes" will be calculated less than -500000
+                                if delta_minutes < -100000:  # Randomly pick -100000
+                                    delta_minutes += 365 * 24 * 60
 
-            except:
-                raise Exception('Timed out. Cannot open detailed match webpage ...')
+                                # Append minutes for odds towards starting of the match to "odds_time_list"
+                                match.loc[index, "win_odds"] = dict_im[0]
+                                match.loc[index, "draw_odds"] = dict_im[1]
+                                match.loc[index, "lose_odds"] = dict_im[2]                    
+                                match.loc[index, "odds_delta_time"] = delta_minutes
+
+                        except:
+                            raise Exception(f'Timed out. Cannot open odds-movement webpage from {companies[company]} ...')
+
+                        # Close "company" window
+                        driver.close()
+                        # Switch driver to specific match page
+                        driver.switch_to.window(wh_dict["match"])                
+
+                    # Close "match" window
+                    driver.close()            
+                    # Switch driver to matches of iterated week page
+                    driver.switch_to.window(wh_dict["week"])
+
+                except:
+                    raise Exception('Timed out. Cannot open detailed match webpage ...')
 
         # Save match of iterated week as csv file
         # Note that this will greatly reduce RAM usage for scrapped data if otherwise saving as an entity after all scrapping work

@@ -10,6 +10,7 @@ from tensorflow.keras.utils import to_categorical
 from flask import Flask, jsonify, render_template, url_for, request
 
 from notebooks.model_predict import predictor
+from notebooks.live_scrapper import live_scrapper
 
 # Create app
 app = Flask(__name__)
@@ -33,6 +34,7 @@ def matches_request():
     # Retrieve league info
     league = request.args.get('type')
 
+    # For leagues other than MLS, data are from the last week of 2018/2019 season
     if league != "MLS":
         # New season in Europe has not started yet. 
         # I've saved odds data for the last weekday of 2018/2019 season free from ML generation and will perform dummy prediction on them
@@ -43,6 +45,10 @@ def matches_request():
             data = data.loc[(data["company"] == "12Bet") | (data["company"] == "WilliamHill"), :].reset_index()
         else:
             data = data.loc[data["company"] == "12Bet", :].reset_index()
+    # For ongoing MLS, data are lively scrapped
+    else:
+        # Live scraping MLS data
+        data = live_scrapper("MLS")
 
         # List to store predicted result for every odds record
         pred = []
@@ -80,9 +86,8 @@ def matches_request():
                 for j in range(len(pred_ct.keys())):
                     # Change datatype from np.int64 to int to be JSON serializable
                     matches_dict[f'match{i}'][f'Pred_ct_{pred_ct.keys()[j]}'] = int(pred_ct.values[j])
-    else:
-        # To be determined by scraping live data
-        matches_dict = "No data for MLS last week matches"
+
+
 
     return jsonify(matches_dict)
 
