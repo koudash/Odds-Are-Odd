@@ -51,41 +51,41 @@ def matches_request():
         data = live_scrapper("MLS")
 
         # List to store predicted result for every odds record
-        pred = []
-        # Make prediction through all odds records
-        for i in range(len(data)):
-            pred.append(predictor(league, data.company[i], [[data.win_odds[i], data.draw_odds[i],\
-                data.lose_odds[i], data.odds_delta_time[i]]]))
+    pred = []
+    # Make prediction through all odds records
+    for i in range(len(data)):
+        pred.append(predictor(league, data.company[i], [[data.win_odds[i], data.draw_odds[i],\
+            data.lose_odds[i], data.odds_delta_time[i]]]))
 
-        # Save prediction results in "data"
-        data["pred"] = pred
+    # Save prediction results in "data"
+    data["pred"] = pred
 
-        # Remove unnecessary columns
-        data = data[["home", "away", "company", "pred", "result"]]
+    # Remove unnecessary columns
+    data = data[["home", "away", "company", "pred", "result"]]
 
-        # Dict to store match info
-        matches_dict = {}
+    # Dict to store match info
+    matches_dict = {}
 
-        for company in ["12Bet", "WilliamHill"]:
-            # Grab all data that uses iterated company's odds
-            data_ana = data.loc[data["company"] == company, :].reset_index()
-            
-            for i in range(len(data_ana.home.unique())):
-                matches_dict[f'match{i}'] = {}
-                # Single match
-                match_pred = data_ana.loc[data_ana["home"] == data_ana.home.unique()[i], :]
-                # Counts of predicted results for iterated home team
-                pred_ct = match_pred.pred.value_counts()
+    for company in ["12Bet", "WilliamHill"]:
+        # Grab all data that uses iterated company's odds
+        data_ana = data.loc[data["company"] == company, :].reset_index()
+        
+        for i in range(len(data_ana.home.unique())):
+            matches_dict[f'match{i}'] = {}
+            # Single match
+            match_pred = data_ana.loc[data_ana["home"] == data_ana.home.unique()[i], :]
+            # Counts of predicted results for iterated home team
+            pred_ct = match_pred.pred.value_counts()
 
-                matches_dict[f'match{i}']['League'] = league
-                matches_dict[f'match{i}']['Company'] = company
-                matches_dict[f'match{i}']['Home'] = data_ana.home.unique()[i]
-                matches_dict[f'match{i}']['Away'] = data_ana.away.unique()[i]
-                matches_dict[f'match{i}']['Result'] = match_pred.result.unique()[0]
+            matches_dict[f'match{i}']['League'] = league
+            matches_dict[f'match{i}']['Company'] = company
+            matches_dict[f'match{i}']['Home'] = data_ana.home.unique()[i]
+            matches_dict[f'match{i}']['Away'] = data_ana.away.unique()[i]
+            matches_dict[f'match{i}']['Result'] = match_pred.result.unique()[0]
 
-                for j in range(len(pred_ct.keys())):
-                    # Change datatype from np.int64 to int to be JSON serializable
-                    matches_dict[f'match{i}'][f'Pred_ct_{pred_ct.keys()[j]}'] = int(pred_ct.values[j])
+            for j in range(len(pred_ct.keys())):
+                # Change datatype from np.int64 to int to be JSON serializable
+                matches_dict[f'match{i}'][f'Pred_ct_{pred_ct.keys()[j]}'] = int(pred_ct.values[j])
 
 
 
