@@ -51,7 +51,7 @@ def live_scrapper (league):
     }
 
     # Use selenium in Chrome
-    driver = webdriver.Chrome()
+    driver = webdriver.Chrome(executable_path=r"notebooks/chromedriver.exe")
 
     # Load url
     driver.get(league_dict[league]["url"])
