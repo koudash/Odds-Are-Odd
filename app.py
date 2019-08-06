@@ -12,11 +12,7 @@ from tensorflow.keras.utils import to_categorical
 from flask import Flask, render_template, url_for, request, jsonify, redirect
 
 from notebooks.model_predict import predictor
-<<<<<<< HEAD
 from notebooks.scrapper_pred import live_scrapper
-=======
-from notebooks.live_scrapper import live_scrapper
->>>>>>> 8e25c9ea7401c6ab524931303a46711845a1b90a
 
 # Create app
 app = Flask(__name__)
@@ -48,7 +44,6 @@ def matches_request():
     if league != "MLS":
         # New season in Europe has not started yet. 
         # I've saved odds data for the last weekday of 2018/2019 season free from ML generation and will perform dummy prediction on them
-<<<<<<< HEAD
         data = pd.read_csv(f'data/{league}_S2018-2019_testweek.csv')
 
         # ONLY USE THE FOLLOWING FIVE LINES OF CODES LOCALLY WHERE RF MODELS ARE AVAILABLE AND ARE BEING USED 
@@ -65,21 +60,6 @@ def matches_request():
         data = live_scrapper(league)
 
     # List to store predicted result for every odds record
-=======
-        data = pd.read_csv(f'data/last_matchday/{league}_S2018-2019_last_week.csv')
-
-        # Save odds data from 12Bet (for PremierLeague save those from WilliamHill as well)
-        if league == "PremierLeague":
-            data = data.loc[(data["company"] == "12Bet") | (data["company"] == "WilliamHill"), :].reset_index()
-        else:
-            data = data.loc[data["company"] == "12Bet", :].reset_index()
-    # For ongoing MLS, data are lively scrapped
-    else:
-        # Live scraping MLS data
-        data = live_scrapper("MLS")
-
-        # List to store predicted result for every odds record
->>>>>>> 8e25c9ea7401c6ab524931303a46711845a1b90a
     pred = []
     # Make prediction through all odds records
     for i in range(len(data)):
@@ -116,7 +96,6 @@ def matches_request():
                 # Change datatype from np.int64 to int to be JSON serializable
                 matches_dict[f'match{i}'][f'Pred_ct_{pred_ct.keys()[j]}'] = int(pred_ct.values[j])
 
-<<<<<<< HEAD
     # Clear intermediate query Collection
     mongo.db.query_im.drop()
 
@@ -135,8 +114,6 @@ def final():
 
     return query_data["match0"]
 
-=======
->>>>>>> 8e25c9ea7401c6ab524931303a46711845a1b90a
 
 
 
