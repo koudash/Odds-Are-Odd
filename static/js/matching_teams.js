@@ -1,5 +1,5 @@
-// Select clicked image and display match info. after waiting for 5s
-d3.selectAll(".col-2").on('click', setTimeout(matchDisplay(), 5000));
+// Select clicked image and display match info. after waiting for 2s
+d3.selectAll(".col-2").on('click', setTimeout(matchDisplay(), 2000));
 
 /**
  * Flask returns data of matches to "prediction.html". 
