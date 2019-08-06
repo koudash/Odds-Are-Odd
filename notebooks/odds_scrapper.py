@@ -161,7 +161,11 @@ def scrapper (league):
                             row_data = row.find_elements_by_tag_name("td")
 
                             if row_data[1].text == company:
+<<<<<<< HEAD
                                 # Element linking to pop-up window where odds movement info. is displayed
+=======
+                                # Element linking to pop-up window where odds-in-movement info. is displayed
+>>>>>>> 8e25c9ea7401c6ab524931303a46711845a1b90a
                                 ele_company = row_data[2]
                                 # Jump out of "for loop" once row of iterated company has been found
                                 break                                
@@ -197,9 +201,15 @@ def scrapper (league):
 
                                 # Append match info. to "match"
                                 match.loc[index, "week"] = wk
+<<<<<<< HEAD
                                 match.loc[index, "home"] = name_transl[home]
                                 match.loc[index, "away"] = name_transl[away]
                                 match.loc[index, "company"] = companies_training[company]
+=======
+                                match.loc[index, "home"] = name_translator[home]
+                                match.loc[index, "away"] = name_translator[away]
+                                match.loc[index, "company"] = companies[company]
+>>>>>>> 8e25c9ea7401c6ab524931303a46711845a1b90a
                                 match.loc[index, "result"] = result
 
                                 # Dict to store win, draw, loss odds as well as update time for home team 
@@ -219,8 +229,12 @@ def scrapper (league):
                                 # Note that "match_time" is GMT-6 and "odds_time" is GMT+8, +8 - (-6) = 14h
                                 delta_minutes = (match_time - odds_time + pd.Timedelta(hours=14)).total_seconds() / 60
                                 # There is possibility that odds were released by the end of 2018 and match played in 2019
+<<<<<<< HEAD
                                 # In this scenario, "delta_minutes" will be calculated less than -500000 
                                 # as match played was assigned to 2018
+=======
+                                # In this scenario, "delta_minutes" will be calculated less than -500000
+>>>>>>> 8e25c9ea7401c6ab524931303a46711845a1b90a
                                 if delta_minutes < -100000:  # Randomly pick -100000
                                     delta_minutes += 365 * 24 * 60
 
@@ -231,7 +245,11 @@ def scrapper (league):
                                 match.loc[index, "odds_delta_time"] = delta_minutes
 
                         except:
+<<<<<<< HEAD
                             raise Exception(f'Timed out. Cannot open odds-movement webpage from {companies_training[company]} ...')
+=======
+                            raise Exception(f'Timed out. Cannot open odds-movement webpage from {companies[company]} ...')
+>>>>>>> 8e25c9ea7401c6ab524931303a46711845a1b90a
 
                         # Close "company" window
                         driver.close()
