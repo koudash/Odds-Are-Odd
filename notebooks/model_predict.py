@@ -16,14 +16,9 @@ def predictor(league, company, instant_features):
     target_encoder = pickle.load(open(y_scalerfile, 'rb'))
 
     # Path to model
-<<<<<<< HEAD
-    # All leagues shpold be using RF models
+    # All leagues should be using RF models
     # KNN models are used here for html demo purposes as RF models are too large to be uploaded to Github
     model_path = f"models/{league}_{company}_knn.pkl"    
-=======
-    # All leagues have one ML model built on odds from 12Bet
-    model_path = f"models/{league}_{company}_ML_model.pkl"    
->>>>>>> 8e25c9ea7401c6ab524931303a46711845a1b90a
 
     # Load ML model from disk
     model = pickle.load(open(model_path, 'rb'))

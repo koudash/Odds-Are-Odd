@@ -4,8 +4,6 @@ import pandas as pd
 import numpy as np
 import pickle
 
-from flask_pymongo import PyMongo
-
 from sklearn.preprocessing import LabelEncoder
 from tensorflow.keras.utils import to_categorical
 
@@ -16,10 +14,6 @@ from notebooks.scrapper_pred import live_scrapper
 
 # Create app
 app = Flask(__name__)
-
-# Use flask_pymongo to set up mongo connection
-app.config['MONGO_URI'] = 'mongodb://localhost:27017/Odds'
-mongo = PyMongo(app)
 
 # Home route
 @app.route('/')
@@ -96,26 +90,8 @@ def matches_request():
                 # Change datatype from np.int64 to int to be JSON serializable
                 matches_dict[f'match{i}'][f'Pred_ct_{pred_ct.keys()[j]}'] = int(pred_ct.values[j])
 
-    # Clear intermediate query Collection
-    mongo.db.query_im.drop()
-
-    # Input queried data into "query_im" Collection
-    mongo.db.query_im.insert_one(matches_dict)
-
     # Redirect to "/output" route after data entry in MongoDB    
-    return render_template('prediction.html')
-
-# Route for prediction webpage 
-@app.route('/output')
-def final():
-
-    # Retrieve queried data
-    query_data = mongo.db.query_im.find_one()
-
-    return query_data["match0"]
-
-
-
+    return render_template('prediction.html', matches=matches_dict)
 
 # Run app
 if __name__ == "__main__":

@@ -34,6 +34,10 @@
         <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/style_pred.css') }}">
         <!-- Favicon -->
         <link rel="icon" href="/static/image/icons/favicon_soccer.png">
+
+        <script>              
+            var data = '{{ matches }}';        
+        </script>
     </head>
     <body>
         <div class="container-fluid leagues mb-5 pb-5">
@@ -44,45 +48,47 @@
             </div>
             <div class="row">
 
-                <form method="POST" action="/league">
-                    <input type="hidden" id="PremierLeague", name="league" value="PremierLeague">
-                    <input type="image" src="../static/image/icons/Leagues/PremierLeague.png" alt="Submit">
-                </form>
 
+                <div class="col-2">
+                    <form method="POST" action="/league">
+                        <input type="hidden" id="PremierLeague", name="league" value="PremierLeague">
+                        <input type="image" src="../static/image/icons/Leagues/PremierLeague.png" alt="Submit">
+                    </form>
+                </div>
+                <div class="col-2">
+                    <form method="POST" action="/league">
+                        <input type="hidden" id="LaLiga", name="league" value="LaLiga">
+                        <input type="image" src="../static/image/icons/Leagues/LaLiga.png" alt="Submit">
+                    </form>
+                </div>
+                <div class="col-2">
+                    <form method="POST" action="/league">
+                        <input type="hidden" id="Bundesliga", name="league" value="Bundesliga">
+                        <input type="image" src="../static/image/icons/Leagues/Bundesliga.png" alt="Submit">
+                    </form>
+                </div>
+                <div class="col-2">
+                    <form method="POST" action="/league">
+                        <input type="hidden" id="Serie-A", name="league" value="Serie-A">
+                        <input type="image" src="../static/image/icons/Leagues/Serie-A.png" alt="Submit">
+                    </form>
+                </div>
+                <div class="col-2">
+                    <form method="POST" action="/league">
+                        <input type="hidden" id="Ligue1", name="league" value="Ligue1">
+                        <input type="image" src="../static/image/icons/Leagues/Ligue1.png" alt="Submit">
+                    </form>
+                </div>
+                <div class="col-2">
+                    <form method="POST" action="/league">
+                        <input type="hidden" id="MLS", name="league" value="MLS">
+                        <input type="image" src="../static/image/icons/Leagues/MLS.png" alt="Submit">
+                    </form>
+                </div>
 
-
-                <!-- <div class="col-2">
-                    <a href="{{ url_for('matches_request', type='PremierLeague' )}}">
-                        <img class="league" src="../static/image/icons/Leagues/PremierLeague.png" alt="PremierLeague">
-                    </a>
-                </div> -->
-                <div class="col-2">
-                    <a href="{{ url_for('matches_request', type='LaLiga' )}}">
-                        <img class="league" src="../static/image/icons/Leagues/LaLiga.png" alt="LaLiga">
-                    </a>
-                </div>
-                <div class="col-2">
-                    <a href="{{ url_for('matches_request', type='Bundesliga' )}}">
-                        <img class="league" src="../static/image/icons/Leagues/Bundesliga.png" alt="Bundesliga">
-                    </a>
-                </div>
-                <div class="col-2">
-                    <a href="{{ url_for('matches_request', type='Serie-A' )}}">
-                        <img class="league" src="../static/image/icons/Leagues/Serie-A.png" alt="Serie-A">
-                    </a>
-                </div>
-                <div class="col-2">
-                    <a href="{{ url_for('matches_request', type='Ligue1' )}}">
-                        <img class="league" src="../static/image/icons/Leagues/Ligue1.png" alt="Ligue1">
-                    </a>
-                </div>
-                <div class="col-2">
-                    <a href="{{ url_for('matches_request', type='MLS' )}}">
-                        <img class="league" src="../static/image/icons/Leagues/MLS.png" alt="MLS">
-                    </a>
-                </div>
             </div>
-        </div>        
+        </div>
+      
         <div class="container-fluid mt-5 pt-5">
             <div class="row">
                 <div class="col-12 text-center" id="pred">
@@ -92,6 +98,6 @@
     </div>
     <script src="https://d3js.org/d3.v5.min.js"></script> 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/d3-tip/0.9.1/d3-tip.js"></script>      
-    <script src="{{ url_for('static', filename='js/matching_teams1.js') }}"></script>  
+    <script src="{{ url_for('static', filename='js/matching_teams.js') }}"></script>  
     </body>
 </html>
