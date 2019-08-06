@@ -4,16 +4,22 @@ import pandas as pd
 import numpy as np
 import pickle
 
+from flask_pymongo import PyMongo
+
 from sklearn.preprocessing import LabelEncoder
 from tensorflow.keras.utils import to_categorical
 
-from flask import Flask, jsonify, render_template, url_for, request
+from flask import Flask, render_template, url_for, request, jsonify, redirect
 
 from notebooks.model_predict import predictor
-from notebooks.live_scrapper import live_scrapper
+from notebooks.scrapper_pred import live_scrapper
 
 # Create app
 app = Flask(__name__)
+
+# Use flask_pymongo to set up mongo connection
+app.config['MONGO_URI'] = 'mongodb://localhost:27017/Odds'
+mongo = PyMongo(app)
 
 # Home route
 @app.route('/')
@@ -28,23 +34,26 @@ def index_pred():
     return render_template('prediction.html')
 
 # Route to retrieve league info from prediction.html and return prediction results
-@app.route('/league')
+@app.route('/league', methods=['POST'])
 def matches_request():
 
     # Retrieve league info
-    league = request.args.get('type')
+    league = request.form['league']
 
     # For leagues other than MLS, data are from the last week of 2018/2019 season
     if league != "MLS":
         # New season in Europe has not started yet. 
         # I've saved odds data for the last weekday of 2018/2019 season free from ML generation and will perform dummy prediction on them
-        data = pd.read_csv(f'data/last_matchday/{league}_S2018-2019_last_week.csv')
+        data = pd.read_csv(f'data/{league}_S2018-2019_testweek.csv')
 
-        # Save odds data from 12Bet (for PremierLeague save those from WilliamHill as well)
-        if league == "PremierLeague":
-            data = data.loc[(data["company"] == "12Bet") | (data["company"] == "WilliamHill"), :].reset_index()
-        else:
-            data = data.loc[data["company"] == "12Bet", :].reset_index()
+        # ONLY USE THE FOLLOWING FIVE LINES OF CODES LOCALLY WHERE RF MODELS ARE AVAILABLE AND ARE BEING USED 
+        # # Save odds data from 12Bet (for PremierLeague save those from WilliamHill as well)
+        # if league == "PremierLeague":
+        #     data = data.loc[(data["company"] == "12Bet") | (data["company"] == "WilliamHill"), :].reset_index()
+        # else:
+        #     data = data.loc[data["company"] == "12Bet", :].reset_index()
+        data = data.loc[data["company"] == "12Bet", :].reset_index()
+
     # For ongoing MLS, data are lively scrapped
     else:
         # Live scraping MLS data
@@ -87,7 +96,26 @@ def matches_request():
                 # Change datatype from np.int64 to int to be JSON serializable
                 matches_dict[f'match{i}'][f'Pred_ct_{pred_ct.keys()[j]}'] = int(pred_ct.values[j])
 
-    return jsonify(matches_dict)
+    # Clear intermediate query Collection
+    mongo.db.query_im.drop()
+
+    # Input queried data into "query_im" Collection
+    mongo.db.query_im.insert_one(matches_dict)
+
+    # Redirect to "/output" route after data entry in MongoDB    
+    return render_template('prediction.html')
+
+# Route for prediction webpage 
+@app.route('/output')
+def final():
+
+    # Retrieve queried data
+    query_data = mongo.db.query_im.find_one()
+
+    return query_data["match0"]
+
+
+
 
 # Run app
 if __name__ == "__main__":

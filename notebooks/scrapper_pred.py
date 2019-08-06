@@ -4,44 +4,10 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 
 import pandas as pd
-from notebooks.name_translator import companies, premier_league, serie_a, laliga, bundesliga, ligue1, mls
+from notebooks.config import league_info, companies_training
 
 
 def live_scrapper (league):
-
-    # Leagues to be scrapped
-    league_dict = {
-        "PremierLeague": {
-            "name_translator": premier_league,
-            "company_list" : ["12BET(菲律宾)", "威廉希尔(英国)"],
-            "url": "Too early. New season has not started!",            
-        },
-        "Serie-A": {
-            "name_translator": serie_a,
-            "company_list" : ["12BET(菲律宾)"],            
-            "url": "Too early. New season has not started!",            
-        },
-        "LaLiga": {
-            "name_translator": laliga,
-            "company_list" : ["12BET(菲律宾)"],  
-            "url": "Too early. New season has not started!",            
-        },
-        "Bundesliga": {
-            "name_translator": bundesliga,
-            "company_list" : ["12BET(菲律宾)"],  
-            "url": "Too early. New season has not started!",            
-        }, 
-        "Ligue1": {
-            "name_translator": ligue1,
-            "company_list" : ["12BET(菲律宾)"],  
-            "url": "Too early. New season has not started!",            
-        },
-        "MLS": {
-            "name_translator": mls,
-            "company_list" : ["12BET(菲律宾)"],
-            "url": "http://info.310win.com/cn/SubLeague/2019/21.html",            
-        }    
-    }
 
     # Dict for window handle (wh)
     wh_dict = {
@@ -54,7 +20,7 @@ def live_scrapper (league):
     driver = webdriver.Chrome(executable_path=r"notebooks/chromedriver.exe")
 
     # Load url
-    driver.get(league_dict[league]["url"])
+    driver.get(league_info[league]["live_url"])
 
     # Note that the webpage is automatically linked to the week of incoming matches
     # There is no need to code for week
@@ -122,7 +88,7 @@ def live_scrapper (league):
                 rows_company = driver.find_elements_by_xpath(f'//*[@id="oddsList_tab"]/tbody/*')
 
                 # Iterate through company list
-                for company in league_dict[league]["company_list"]:
+                for company in league_info[league]["company_pred"]:
 
                     # Look for row of "12Bet"
                     for row in rows_company:
@@ -191,7 +157,7 @@ def live_scrapper (league):
                             # Note that "match_time" is GMT-6 and "odds_time" is GMT+8, +8 - (-6) = 14h
                             delta_minutes = (match_time - odds_time + pd.Timedelta(hours=14)).total_seconds() / 60
                             # There is possibility that odds were released by the end of 2018 and match played in 2019
-                            # In this scenario, "delta_minutes" will be calculated less than -500000
+                            # In this scenario, "delta_minutes" will be calculated less than -500000 as match played was assigned to 2018
                             if delta_minutes < -100000:  # Randomly pick -100000
                                 delta_minutes += 365 * 24 * 60
 
@@ -202,13 +168,12 @@ def live_scrapper (league):
                             match.loc[index, "odds_delta_time"] = delta_minutes
 
                     except:
-                        raise Exception(f'Timed out. Cannot open odds-movement webpage from {companies[company]} ...')
+                        raise Exception(f'Timed out. Cannot open odds-movement webpage from {companies_training[company]} ...')
 
                 # Close "company" window
                 driver.close()
-                # Switch driver to specific match page
+                # Switch driver to week page
                 driver.switch_to.window(wh_dict["week"])                
-
 
             except:
                 raise Exception('Timed out. Cannot open detailed match webpage ...')

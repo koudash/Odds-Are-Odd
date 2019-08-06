@@ -6,8 +6,9 @@ from selenium.webdriver.support import expected_conditions as EC
 import pandas as pd
 import glob
 import os
+import random
 
-from name_translator import companies, premier_league, serie_a, laliga, bundesliga, ligue1, mls
+from config import league_info, companies_training
 
 '''
 Function to scrape odds-movement data from http://info.310win.com/
@@ -18,15 +19,27 @@ name_translator: in combination with "name_translator.py", convert betting compa
 url: url for the matches under selected league and for selected season, STRING type
 team_ct: number of soccer teams played in selected season in selected league, INTEGER type
 '''
-def scrapper (league, season, name_translator, url, team_ct):
+
+def scrapper (league):
+
+    # Retrieve info. for league under scraping
+    for key in list(league_info.keys()):
+        if key == league:
+            season = league_info[league]["season"]
+            name_transl = league_info[league]["name_transl"]
+            url = league_info[league]["url"]
+            team_ct = league_info[league]["team_ct"]
+
+    # # Randomly set aside one week of matches for validation purpose
+    test_wk = random.randint(0, team_ct)
 
     # Print league info
-    print("*" * 80)
-    print(f"START ODDS-MOVEMENT SCRAPING FOR {league}_S{season} ... ")
-    print("*" * 80)
+    print("*" * 60)
+    print(f"ODDS-MOVEMENT SCRAPING STARTS FOR {league}_S{season}")
+    print("." * 60)
     
     # List for company names
-    company_list = ["bet 365(英国)", "威廉希尔(英国)", "Bwin(奥地利)", "12BET(菲律宾)"]
+    company_list = list(companies_training.keys())
 
     # Dict for window handle (wh)
     wh_dict = {
@@ -53,7 +66,7 @@ def scrapper (league, season, name_translator, url, team_ct):
         print(f"Matches from week{wk} is under scrapping ...")
 
         # Element where week of match is selected
-        # Note that web layout for MLS is different from the other league
+        # Note that MLS has regular season and playoffs, there is only 34 rather than (24 - 1) * 2 = 46 weeks of matches in regular season
         if league == "MLS":
             if wk <= 17:
                 ele_wk = driver.find_elements_by_xpath(f'//*[@id="Table2"]/tbody/tr[1]/td[{wk + 1}]')[0]
@@ -148,7 +161,7 @@ def scrapper (league, season, name_translator, url, team_ct):
                             row_data = row.find_elements_by_tag_name("td")
 
                             if row_data[1].text == company:
-                                # Element linking to pop-up window where odds-in-movement info. is displayed
+                                # Element linking to pop-up window where odds movement info. is displayed
                                 ele_company = row_data[2]
                                 # Jump out of "for loop" once row of iterated company has been found
                                 break                                
@@ -184,9 +197,9 @@ def scrapper (league, season, name_translator, url, team_ct):
 
                                 # Append match info. to "match"
                                 match.loc[index, "week"] = wk
-                                match.loc[index, "home"] = name_translator[home]
-                                match.loc[index, "away"] = name_translator[away]
-                                match.loc[index, "company"] = companies[company]
+                                match.loc[index, "home"] = name_transl[home]
+                                match.loc[index, "away"] = name_transl[away]
+                                match.loc[index, "company"] = companies_training[company]
                                 match.loc[index, "result"] = result
 
                                 # Dict to store win, draw, loss odds as well as update time for home team 
@@ -206,7 +219,8 @@ def scrapper (league, season, name_translator, url, team_ct):
                                 # Note that "match_time" is GMT-6 and "odds_time" is GMT+8, +8 - (-6) = 14h
                                 delta_minutes = (match_time - odds_time + pd.Timedelta(hours=14)).total_seconds() / 60
                                 # There is possibility that odds were released by the end of 2018 and match played in 2019
-                                # In this scenario, "delta_minutes" will be calculated less than -500000
+                                # In this scenario, "delta_minutes" will be calculated less than -500000 
+                                # as match played was assigned to 2018
                                 if delta_minutes < -100000:  # Randomly pick -100000
                                     delta_minutes += 365 * 24 * 60
 
@@ -217,7 +231,7 @@ def scrapper (league, season, name_translator, url, team_ct):
                                 match.loc[index, "odds_delta_time"] = delta_minutes
 
                         except:
-                            raise Exception(f'Timed out. Cannot open odds-movement webpage from {companies[company]} ...')
+                            raise Exception(f'Timed out. Cannot open odds-movement webpage from {companies_training[company]} ...')
 
                         # Close "company" window
                         driver.close()
@@ -233,16 +247,20 @@ def scrapper (league, season, name_translator, url, team_ct):
                     raise Exception('Timed out. Cannot open detailed match webpage ...')
 
         # Save match of iterated week as csv file
-        # Note that this will greatly reduce RAM usage for scrapped data if otherwise saving as an entity after all scrapping work
-        match.to_csv(f"../data/{league}_S{season}-Week{wk}.csv", index=False, header=True)
+        # Note that save odds by week to greatly reduce the risk of wasting time and losing data due to instable connection
+        if wk != test_wk:
+            match.to_csv(f"../data/{league}_S{season}-Week{wk}.csv", index=False, header=True)
+        # Save data of test week with different name so that it won't be accounted for concatenation later on
+        else:
+            match.to_csv(f"../data/{league}_S{season}_testweek.csv", index=False, header=True)
 
     # Close "week" window
     driver.close()
     
     # Scrapping complete
-    print("*" * 80)
+    print("." * 60)
     print(f"SCRAPING COMPLETE FOR {league}_S{season}")
-    print("*" * 80 + "\n")
+    print("*" * 60 + "\n")
 
     # All csv files scrapped
     csv_im = glob.glob(os.path.join("../data/", f"{league}_S{season}-Week*.csv"))

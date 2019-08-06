@@ -1,3 +1,6 @@
 .ipynb_checkpoints
 __pycache__
 .vscode
+
+# Only upload KNN models as the size of RF models are too large for Github
+*_rf.pkl

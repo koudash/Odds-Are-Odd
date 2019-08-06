@@ -32,22 +32,30 @@
         <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
         <!-- Local style CSS -->
         <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/style_pred.css') }}">
-        <!-- Avoid fake favicon requests -->
-        <link rel="icon" href="data:;base64,iVBORw0KGgo=">
+        <!-- Favicon -->
+        <link rel="icon" href="/static/image/icons/favicon_soccer.png">
     </head>
     <body>
-        <div class="container-fluid mb-5 pb-5">
+        <div class="container-fluid leagues mb-5 pb-5">
             <div class="row">
                 <div class="col-12">
                     <h1 class="text-center text-warning mt-5 my-3">Choose a league to begin with ...</h1>
                 </div>
             </div>
             <div class="row">
-                <div class="col-2">
+
+                <form method="POST" action="/league">
+                    <input type="hidden" id="PremierLeague", name="league" value="PremierLeague">
+                    <input type="image" src="../static/image/icons/Leagues/PremierLeague.png" alt="Submit">
+                </form>
+
+
+
+                <!-- <div class="col-2">
                     <a href="{{ url_for('matches_request', type='PremierLeague' )}}">
                         <img class="league" src="../static/image/icons/Leagues/PremierLeague.png" alt="PremierLeague">
                     </a>
-                </div>
+                </div> -->
                 <div class="col-2">
                     <a href="{{ url_for('matches_request', type='LaLiga' )}}">
                         <img class="league" src="../static/image/icons/Leagues/LaLiga.png" alt="LaLiga">
@@ -82,8 +90,8 @@
             </div>
         </div>       
     </div>
-    <script src="https://d3js.org/d3.v5.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/d3-tip/0.9.1/d3-tip.js"></script>
-    <script src="{{ url_for('static', filename='js/matching_teams.js') }}"></script>  
+    <script src="https://d3js.org/d3.v5.min.js"></script> 
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/d3-tip/0.9.1/d3-tip.js"></script>      
+    <script src="{{ url_for('static', filename='js/matching_teams1.js') }}"></script>  
     </body>
 </html>

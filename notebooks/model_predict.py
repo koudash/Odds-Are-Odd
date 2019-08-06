@@ -9,15 +9,16 @@ from tensorflow.keras.utils import to_categorical
 def predictor(league, company, instant_features):
 
     # Load "X_scaler"
-    X_scalerfile = "models/X-scaler.sav"
+    X_scalerfile = f"models/X-scaler_{league}.sav"
     X_scaler = pickle.load(open(X_scalerfile, 'rb'))
     # Load "target_encoder"
     y_scalerfile = 'models/target-encoder.sav'
     target_encoder = pickle.load(open(y_scalerfile, 'rb'))
 
     # Path to model
-    # All leagues have one ML model built on odds from 12Bet
-    model_path = f"models/{league}_{company}_ML_model.pkl"    
+    # All leagues shpold be using RF models
+    # KNN models are used here for html demo purposes as RF models are too large to be uploaded to Github
+    model_path = f"models/{league}_{company}_knn.pkl"    
 
     # Load ML model from disk
     model = pickle.load(open(model_path, 'rb'))
