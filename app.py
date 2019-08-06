@@ -1,4 +1,3 @@
-# flask tools
 import json
 import pandas as pd
 import numpy as np
@@ -7,7 +6,7 @@ import pickle
 from sklearn.preprocessing import LabelEncoder
 from tensorflow.keras.utils import to_categorical
 
-from flask import Flask, render_template, url_for, request, jsonify, redirect
+from flask import Flask, render_template, url_for, request
 
 from notebooks.model_predict import predictor
 from notebooks.scrapper_pred import live_scrapper
@@ -88,9 +87,9 @@ def matches_request():
 
             for j in range(len(pred_ct.keys())):
                 # Change datatype from np.int64 to int to be JSON serializable
-                matches_dict[f'match{i}'][f'Pred_ct_{pred_ct.keys()[j]}'] = int(pred_ct.values[j])
+                matches_dict[f'match{i}'][f'Pred_{pred_ct.keys()[j]} (ct)'] = int(pred_ct.values[j])
 
-    # Redirect to "/output" route after data entry in MongoDB    
+    # Return "matches_dict" to "prediction.html"    
     return render_template('prediction.html', matches=matches_dict)
 
 # Run app

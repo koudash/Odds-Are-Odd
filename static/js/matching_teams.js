@@ -14,7 +14,7 @@ function matchDisplay() {
     matchObj = {};
 
     // Column names to be shown in "prediction.html"
-    let cols = ["Home", "Away", "Company", "Pred_ct_W", "Pred_ct_D", "Pred_ct_L", "Result"];
+    let cols = ["Home", "Away", "Company", "Pred_W (ct)", "Pred_D (ct)", "Pred_L (ct)", "Result"];
 
     // Assign keys to "matchObj"
     cols.forEach((col) => matchObj[col] = []);

@@ -135,9 +135,9 @@ def live_scrapper (league):
                             index = len(match)
 
                             # Append match info. to "match"
-                            match.loc[index, "home"] = mls[home]
-                            match.loc[index, "away"] = mls[away]
-                            match.loc[index, "company"] = company
+                            match.loc[index, "home"] = league_info[league]["name_transl"][home]
+                            match.loc[index, "away"] = league_info[league]["name_transl"][away]
+                            match.loc[index, "company"] = companies_training[company]
                             match.loc[index, "result"] = result
 
                             # Dict to store win, draw, loss odds as well as update time for home team 
