@@ -45,3 +45,19 @@ body {
 .optimized {
     color: white;
 }
+
+.btn-primary {
+    border-radius: 30px 150px 15px 75px;
+    background: transparent;
+    color: slateblue;
+    border-color: slateblue;
+    font-size: 30px;
+}
+
+.lead {
+    font-size: 25px;
+}
+
+li {
+    font-size: 20px
+}

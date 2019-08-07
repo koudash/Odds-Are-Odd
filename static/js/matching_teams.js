@@ -112,13 +112,13 @@ function matchDisplay() {
     let tbody = d3.select("#pred-table")
         .append("table")
         .attr("class", "temporary-table")
-        .append("tbody");
+        .append('tbody');
     // Append "tr" for "th"
-    let trHeader = tbody.append("tr")
+    let trHeader = tbody.append('tr')
         .attr("class", "py-5");
     // Append "th"
     cols.forEach((col) =>{
-        trHeader.append("td")
+        trHeader.append('td')
             .text(col);
     });
 
