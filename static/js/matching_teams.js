@@ -24,7 +24,7 @@ function matchDisplay() {
 
     // Note that matches may not get prediction on all "W", "D", and "L"
     // As a result, isolate info. for each match so that empty string functions as placeholder in "matchObj"
-    for (let i = 0; i < totalMatches - 1; i++) {
+    for (let i = 0; i < totalMatches; i++) {
 
         // Split original data to get rid of info. to the left of iterated match
         split_im = data.split(`&#39;match${i}&#39;: `)[1];
@@ -50,7 +50,7 @@ function matchDisplay() {
         }
 
         // Remove "}" from the last element of "matchArr"
-        if (i === totalMatches - 2) matchArr.push(matchArr.pop().slice(0, -1));
+        if (i === totalMatches - 1) matchArr.push(matchArr.pop().slice(0, -1));
 
         // Append match info to "matchObj"
         cols.forEach((col) => {
@@ -70,7 +70,7 @@ function matchDisplay() {
             }    
 
         });    
-    }
+    }   
    
     // Remove pre-existing table
     d3.select("table").remove();
@@ -102,6 +102,7 @@ function matchDisplay() {
                 tr.append('td')
                     .append('img')
                     .attr("src", `../static/image/icons/${league}/${matchObj[col][i]}.png`)
+                    .attr("class", "team_icon")
             } else {
                 tr.append('td')
                     .text(matchObj[col][i]);
