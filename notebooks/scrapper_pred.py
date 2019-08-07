@@ -16,9 +16,13 @@ def live_scrapper (league):
         "company": ""
     }
 
-    # Use selenium in Chrome
-    # Note that this function is set to be referenced and called from app.py (root)
-    driver = webdriver.Chrome(executable_path=r"notebooks/chromedriver.exe")
+    # # Use selenium in Chrome
+    # # Note that this function is set to be referenced and called from app.py (root)
+    # driver = webdriver.Chrome(executable_path=r"notebooks/chromedriver.exe")
+
+    options = ChromeOptions()
+    options.binary_location = "/app/.apt/usr/bin/google-chrome-stable"
+    driver = webdriver.Chrome(chrome_options=options)
 
     # Load url
     driver.get(league_info[league]["live_url"])
