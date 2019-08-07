@@ -20,6 +20,7 @@ url: url for the matches under selected league and for selected season, STRING t
 team_ct: number of soccer teams played in selected season in selected league, INTEGER type
 '''
 
+# Function "scrapper" takes name of the league and returns odds movements data 
 def scrapper (league):
 
     # Retrieve info. for league under scraping
@@ -262,7 +263,7 @@ def scrapper (league):
     print(f"SCRAPING COMPLETE FOR {league}_S{season}")
     print("*" * 60 + "\n")
 
-    # All csv files scrapped
+    # All csv files scrapped except the one to be used for ML model validation
     csv_im = glob.glob(os.path.join("../data/", f"{league}_S{season}-Week*.csv"))
     # Concatenate all csv file into one
     df_all = pd.concat(map(pd.read_csv, csv_im))

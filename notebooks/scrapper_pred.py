@@ -6,7 +6,7 @@ from selenium.webdriver.support import expected_conditions as EC
 import pandas as pd
 from notebooks.config import league_info, companies_training
 
-
+# Function "live_scrapper" takes name of the league, scrape the incoming week of matches and returns odds movements data
 def live_scrapper (league):
 
     # Dict for window handle (wh)
@@ -17,6 +17,7 @@ def live_scrapper (league):
     }
 
     # Use selenium in Chrome
+    # Note that this function is set to be referenced and called from app.py (root)
     driver = webdriver.Chrome(executable_path=r"notebooks/chromedriver.exe")
 
     # Load url

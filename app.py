@@ -33,10 +33,9 @@ def matches_request():
     # Retrieve league info
     league = request.form['league']
 
-    # For leagues other than MLS, data are from the last week of 2018/2019 season
+    # For leagues other than MLS, data are from randomly selected week of matches in 2018/2019 season as new season has not started
     if league != "MLS":
-        # New season in Europe has not started yet. 
-        # I've saved odds data for the last weekday of 2018/2019 season free from ML generation and will perform dummy prediction on them
+
         data = pd.read_csv(f'data/{league}_S2018-2019_testweek.csv')
 
         # ONLY USE THE FOLLOWING FIVE LINES OF CODES LOCALLY WHERE RF MODELS ARE AVAILABLE AND ARE BEING USED 
@@ -45,6 +44,7 @@ def matches_request():
         #     data = data.loc[(data["company"] == "12Bet") | (data["company"] == "WilliamHill"), :].reset_index()
         # else:
         #     data = data.loc[data["company"] == "12Bet", :].reset_index()
+
         data = data.loc[data["company"] == "12Bet", :].reset_index()
 
     # For ongoing MLS, data are lively scrapped
