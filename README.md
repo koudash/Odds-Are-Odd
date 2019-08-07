@@ -1,6 +1,6 @@
 # Odds-Are-Odd
 <p><strong>Is odds low enough trustworthy in predicting a home win? Shall I never go with high odds? What is the balance between risk and profit in soccer betting?</strong><p>
-<img src="/static/image/soccer_betting.jpg" alt="soccer betting"> 
+<img src="/static/image/ipynb/soccer_betting.jpg" alt="soccer betting"> 
 
 <p> To address the aforementioned questions, odds movements data of Season 2018/2019 for top five European leagues (<i><strong>Premier League</strong></i> from England, <i><strong>La Liga</strong></i> from Spain, <i><strong>Bundesliga</strong></i> from Germany, <i><strong>Serie A</strong></i> from Italy, and <i><strong>Ligue1</strong></i> from France) as well as those for ongoing Season 2019 of <i><strong>MLS</strong></i> (U.S) were scraped from <a href="http://info.310win.com/cn/League/2018-2019/36.html">310win.com</a> using <code>Selenium</code>. Specifically, for each league, a randomly selected week of match was put aside for model testing purpose. All other weeks of matches were used to generate machine learning models. Match info. has been translated back to English during data processing.<p>
 
