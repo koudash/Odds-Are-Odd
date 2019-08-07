@@ -4,7 +4,7 @@
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <meta http-equiv="X-UA-Compatible" content="ie=edge">
-        <title>Matches</title>
+        <title>Match Prediction</title>
         <!-- Bootstrap CSS -->
         <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" 
             integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
@@ -21,15 +21,6 @@
         integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
         <!-- "Sketchy" theme from Bootswatch -->
         <link rel="stylesheet" type="text/css" href="https://bootswatch.com/4/sketchy/bootstrap.min.css">
-        <!-- Leaflet CSS & JS -->
-        <link rel="stylesheet" href="https://unpkg.com/leaflet@1.5.1/dist/leaflet.css"
-            integrity="sha512-xwE/Az9zrjBIphAcBb3F6JVqxf46+CDLwfLMHloNu6KEQCAWi6HcDUbeOfBIptF7tcCzusKFjFw2yuvEpDL9wQ=="
-            crossorigin=""/>
-        <script src="https://unpkg.com/leaflet@1.5.1/dist/leaflet.js"
-            integrity="sha512-GffPMF3RvMeYyc1LWMHtK8EbPv0iNZ8/oTtHPx9/cc2ILxQ+u905qIwdpULaqDkyBKgOaB57QTMg7ztg8Jm2Og=="
-            crossorigin=""></script>
-        <!-- Plotly CDN -->
-        <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
         <!-- Local style CSS -->
         <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/style_pred.css') }}">
         <!-- Favicon -->
@@ -40,15 +31,21 @@
         </script>
     </head>
     <body>
-        <div class="container-fluid leagues mb-5 pb-5">
+        <div class="container-fluid leagues mb-5">
             <div class="row">
                 <div class="col-12">
-                    <h1 class="text-center text-warning mt-5 my-3">Choose a league to begin with ...</h1>
+                    <h1 class="size50 text-center my-5">
+                        <span class="C-00FFFF">Choose</span>
+                        <span class="C-FF66FF">a</span>
+                        <span class="C-F7DE00">league</span> 
+                        <span class="C-FF9900">to</span> 
+                        <span class="C-FF0000">begin</span> 
+                        <span class="C-00FF00">with</span>
+                    </h1>
                 </div>
             </div>
+            <!-- Row of icons for leagues -->
             <div class="row">
-
-
                 <div class="col-2">
                     <form method="POST" action="/league">
                         <input type="hidden" id="PremierLeague", name="league" value="PremierLeague">
@@ -85,19 +82,21 @@
                         <input type="image" src="../static/image/icons/Leagues/MLS.png" alt="Submit">
                     </form>
                 </div>
-
             </div>
         </div>
-      
-        <div class="container-fluid mt-5 pt-5">
+        <!-- Container for appending data from external JavaScript -->
+        <div class="container-fluid mt-5">
             <div class="row">
-                <div class="col-12 text-center" id="pred">
-                </div>
+                <div class="col-12 text-center" id="pred-info"></div>
+            </div>
+            <div class="row">
+                <div class="col-12 text-center mb-5" id="pred-table"></div>
             </div>
         </div>       
     </div>
-    <script src="https://d3js.org/d3.v5.min.js"></script> 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/d3-tip/0.9.1/d3-tip.js"></script>      
+    <!-- D3 -->
+    <script src="https://d3js.org/d3.v5.min.js"></script>
+    <!-- External JavaScript -->
     <script src="{{ url_for('static', filename='js/matching_teams.js') }}"></script>  
     </body>
 </html>

@@ -71,12 +71,45 @@ function matchDisplay() {
 
         });    
     }   
-   
+
+    // Remove title for existing predicted result
+    d3.select(".pred-title").remove();
+
+    // Add new title for predicted result
+    d3.select("#pred-info")
+        .append('p')
+        .attr("class", "pred-title mb-5")
+        .text("Prediction results for");
+
+    /**
+     * Return color code corresponding to the background of league in "prediction.html"
+     * @param {*} league Name of league, STRING datatype
+     */
+        function leagueColor(league) {
+
+        return league === "PremierLeague" ? "C-00FFFF" :
+                league === "LaLiga" ? "C-FF66FF" :
+                league === "Bundesliga" ? "C-F7DE00" :
+                league === "Serie-A" ? "C-FF9900" :
+                league === "Ligue1" ? "C-FF0000" :
+                league === "MLS" ? "C-00FF00" : "C-000000";
+
+    }
+
+    // Retrieve color code for selected league
+    let color = leagueColor(league)
+
+    // Append league name and color code for title of prediction on "prediction.html"
+    d3.select(".pred-title")
+        .append('p')
+        .attr("class", `${color}`)
+        .text(`${league}`);
+
     // Remove pre-existing table
     d3.select("table").remove();
 
     // Append header of tbody
-    let tbody = d3.select("#pred")
+    let tbody = d3.select("#pred-table")
         .append("table")
         .attr("class", "temporary-table")
         .append("tbody");
@@ -102,7 +135,8 @@ function matchDisplay() {
                 tr.append('td')
                     .append('img')
                     .attr("src", `../static/image/icons/${league}/${matchObj[col][i]}.png`)
-                    .attr("class", "team_icon")
+                    .attr("class", "py-2");
+
             } else {
                 tr.append('td')
                     .text(matchObj[col][i]);

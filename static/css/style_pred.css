@@ -10,8 +10,41 @@ body {
     background-size: 100%;
 }
 
-.league {
-    border-radius: 8px, 2px, 15px, 5px;
+.size50 {
+    font-size: 50px;
+}
+
+.pred-title {
+    color: white;
+    font-size: 40px;
+}
+
+.C-00FFFF {
+    color: #00FFFF;
+}
+
+.C-FF66FF {
+    color: #FF66FF;
+}
+
+.C-F7DE00 {
+    color: #F7DE00;
+}
+
+.C-FF9900 {
+    color: #FF9900;
+}
+
+.C-FF0000 {
+    color: #FF0000;
+}
+
+.C-00FF00 {
+    color: #00FF00;
+}
+
+.C-000000 {
+    color: #000000;
 }
 
 table {
@@ -21,8 +54,6 @@ table {
 
 td {
     background-color: transparent !important;
-    color: orange;
+    color: black;
     font-size: 30px;
 }
-
-
