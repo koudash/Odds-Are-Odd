@@ -1,4 +1,4 @@
-// Select clicked image and display match info. after waiting for 2s
+// Select clicked image and display match info. after waiting 2s for html refreshing (render_template)
 d3.selectAll(".col-2").on('click', setTimeout(matchDisplay(), 2000));
 
 /**
@@ -7,7 +7,7 @@ d3.selectAll(".col-2").on('click', setTimeout(matchDisplay(), 2000));
  */
 function matchDisplay() {
 
-    // Retrieve league info
+    // Retrieve league info (as string)
     let league = data.split('{&#39;League&#39;: &#39;')[1].split("&#39;")[0];
 
     // Object to hold match info
@@ -16,10 +16,10 @@ function matchDisplay() {
     // Column names to be shown in "prediction.html"
     let cols = ["Home", "Away", "Company", "Pred_W (ct)", "Pred_D (ct)", "Pred_L (ct)", "Result"];
 
-    // Assign keys to "matchObj"
+    // Assign keys to "matchObj" (type of values as array)
     cols.forEach((col) => matchObj[col] = []);
 
-    // Determine total matches to be displayed
+    // Use "keys" of data string to determine total matches to be displayed
     let totalMatches = data.split("match").length - 1;
 
     // Note that matches may not get prediction on all "W", "D", and "L"
@@ -89,7 +89,8 @@ function matchDisplay() {
             .text(col);
     });
 
-    for (let i = 0; i < matchObj["Home"].length; i++) {
+    // Append data of tbody
+    for (let i = 0; i < totalMatches; i++) {
 
         let tr = d3.select('tbody')
             .append('tr')
@@ -97,11 +98,7 @@ function matchDisplay() {
 
         cols.forEach((col) => {
 
-            if (col === "Home") {
-                tr.append('td')
-                    .append('img')
-                    .attr("src", `../static/image/icons/${league}/${matchObj[col][i]}.png`)
-            } else if (col === "Away") {
+            if (col === "Home" || col === "Away") {
                 tr.append('td')
                     .append('img')
                     .attr("src", `../static/image/icons/${league}/${matchObj[col][i]}.png`)
