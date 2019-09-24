@@ -185,13 +185,13 @@ def scrapper (league):
 
                             # ********** |Scrape odds data from selected company| ********** #
                             # Retrieve all rows from tbody
-                            rows_odds = driver.find_elements_by_xpath('/html/body/table/tbody/*')
+                            rows_odds = driver.find_elements_by_xpath('//*[@id="odds"]/table/tbody/*')
 
                             # Loop through each row (except the header)
                             # Note that there is no "th" in this table and header is actually the first "tr"
                             for o in range(1, len(rows_odds)):
                                 # Find all "td"
-                                tds = rows_odds[o].find_elements_by_xpath(f'/html/body/table/tbody/tr[{o + 1}]/*')
+                                tds = rows_odds[o].find_elements_by_xpath(f'//*[@id="odds"]/table/tbody/tr[{o + 1}]/*')
 
                                 # Variable to hold the row in "match" where new data are to be appended
                                 index = len(match)
